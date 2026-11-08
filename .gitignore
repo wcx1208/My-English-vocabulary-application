@@ -1,0 +1,5 @@
+.zcode-site/
+build_out.txt
+local.properties
+web/
+*.log
