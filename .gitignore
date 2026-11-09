@@ -1,6 +1,7 @@
 .gradle/
 build/
 local.properties
-node_modules/
 *.log
 *.exe
+*.apk
+release/

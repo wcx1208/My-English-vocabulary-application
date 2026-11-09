@@ -1,52 +1,53 @@
-# 我的六级单词（专属 App）
+# 我的六级单词 · 安卓版
 
-**当前版本 v2.8**：词库 6090 词、FSRS-6 遗忘曲线调度、辨析（形近/近义）、词根记忆法、真题例句、6078 条离线真人美音、可切换英音、自定义壁纸与图标、**完整备份导入/导出**（词卡 + 学习历史）。界面美化详见 [DESIGN.md](DESIGN.md)。
+六级备考背单词应用（Jetpack Compose），**完全离线可用**。
 
-## 方式一：网页版（今天就能用，无需任何安装）
+## 下载安装
 
-1. 把 `web/index.html` 和 `web/data.js` 两个文件一起发到手机（微信/QQ/数据线均可）；
-2. 用浏览器打开 `index.html`（安卓 Chrome/Edge 都行），添加到主屏幕，效果和 App 几乎一样；
-3. 数据存在手机本地（localStorage），换浏览器或删文件会丢进度。
+[**点此下载最新 APK**](https://github.com/wcx1208/My-English-vocabulary-application/releases/latest)（Android 8.0+，约 100 MB，含内置发音）
 
-## 方式二：安卓 APK（已编译好，直接装）
+安装提示"未知来源应用"选允许即可；覆盖安装不会丢失学习进度。
 
-`Desktop\实验\我的六级单词_v2.8.apk`（约 99.9MB，兼容 Android 8.0+）：
-1. 把 APK 通过微信/QQ/数据线发到手机，点开安装（允许"未知来源应用"即可，debug 签名仅供个人使用）；
-2. 首次打开自动加载内置词库，无需网络；美音离线，英音按缓存 → 在线 → 系统 TTS 回退。
+## 功能
 
-## 本机重新编译（改完代码/词库后更新 APK）
+- **6194 词**：音标 · 释义 · 例句（100% 覆盖）· 易混辨析 · 词根记忆法 · 搭配 · 同义替换
+- **4 级难度**：基础 2208 / 核心 2252 / 拓展 1569 / 进阶 61（BNC 词频 + 考纲标签客观定档）
+- **四种学习模式**：卡片认词 / 释义选择 / 拼写 / 听写
+- **FSRS-6 遗忘曲线调度**：每个词按记忆稳定性安排在遗忘临界点复习
+- **6078 条真人美音内置**：飞行模式也能发音（内置 → 缓存 → 在线 → 系统 TTS 四级兜底）
+- **个性化**：6 套渐变壁纸 / 相册自定义（应用内裁切 + 透明度可调）/ 自定义桌面图标
+- **激励**：每日目标圆环、连续打卡、177 条英文名言
+- 错词本 · 7 天热力图 · 进度导入导出 · 跨天自动重置
 
-v2.8 已含全部代码改动。构建链已装在 `C:\Users\wcx\android-build\`（JDK17 + Gradle 8.7 + Android SDK）。AGP 不接受中文路径，构建副本在 `C:\Users\wcx\android-build\MyWords`：
+## 源码结构
 
-```bat
-robocopy "C:\Users\wcx\Desktop\实验\mywords-app\app" "C:\Users\wcx\android-build\MyWords\app" /E /XD build
-cd C:\Users\wcx\android-build\MyWords
-set "JAVA_HOME=C:\Users\wcx\android-build\jdk-17.0.20.1+1"
-set "PATH=%JAVA_HOME%\bin;C:\Users\wcx\android-build\gradle-8.7\bin;%PATH%"
-gradle.bat :app:assembleDebug --no-daemon --console=plain --max-workers=2
+```
+app/src/main/java/com/wcx/mywords/
+├── MainActivity.kt   页面与交互（主页/学习/词表/统计/设置/裁切器）
+├── Fsrs.kt           FSRS-6 复习调度算法
+├── Words.kt          词条模型、词库加载、进度持久化
+├── Audio.kt          发音引擎（内置资产 → 本地缓存 → 在线 → TTS）
+└── Theme.kt          壁纸与主题引擎（代码绘制渐变 + 自定义图片）
+app/src/main/assets/
+├── words.json        6194 词条（含例句/辨析/记忆法）
+├── quotes.json       177 条激励名言
+├── wallpaper_default.png  默认壁纸
+└── audio/us/         6078 条真人美音 mp3
 ```
 
-产物在 `C:\Users\wcx\android-build\MyWords\app\build\outputs\apk\debug\app-debug.apk`。
-注意：本机虚拟内存提交余量小，gradle.properties 已锁定 -Xmx1200m + workers.max=2，别调大；词库更新先重跑 `extract_words.py` 再同步 `app/src/main/assets/words.json`。
+## 构建
 
-## 学习自哪些网上项目（对照表）
+用 Android Studio 打开本目录（AGP 8.4.2 / Kotlin 1.9.24 / compileSdk 34 / JDK 17），
+或命令行（项目路径不能含中文，AGP 限制）：
 
-| 本项目位置 | 学习对象 | 学到什么 |
-|---|---|---|
-| `MainActivity.kt` 整体结构 | peterdevacc/Landing（Apache-2.0） | 单 Activity + Compose + Material3 的背单词 App 骨架、分级词库组织 |
-| `Words.kt` Scheduler | open-spaced-repetition/FSRS-Kotlin | 间隔重复调度思想（三键评级、难度/间隔自适应）；v1 是简化实现 |
-| `MainActivity.kt` playAudio | 不背单词类应用的发音方案 | 有道 dictvoice 音频直链（type=1 英式，与手册音标一致） |
-| `words.json` | kajweb/dict + ECDICT | 词库数据的组织方式（本项目的数据直接来自自己的手册） |
-| 词表搜索/详情 | zyronon/TypeWords | 跟写/听写的产品思路（v2 计划实现打字模式） |
+```bash
+./gradlew assembleDebug     # 产物在 app/build/outputs/apk/debug/
+```
 
-## v2 升级路线（按需）
+## 数据来源
 
-1. **真 FSRS 调度**：引 `open-spaced-repetition` 的 fsrs 依赖替换 `Scheduler`；
-2. **Room 数据库**：进度从 SharedPreferences 换 Room（参考 AnkiDroid，GPL，只学思路不抄码）；
-3. **离线发音**：脚本批量下载 dictvoice mp3 进 assets，或接 sherpa-onnx 离线 TTS；
-4. **打字练习模式**：参考 TypeWords 的跟写交互；
-5. **打卡联动**：与《六级备考工具包》的 0-5 打卡规则对齐。
+[kajweb/dict](https://github.com/kajweb/dict)（不背单词 CET6 词书）· [ECDICT](https://github.com/skywind3000/ECDICT)（音标/柯林斯星级/BNC 词频）· [Tatoeba](https://tatoeba.org)（CC-BY 例句补充）· [py-fsrs](https://github.com/open-spaced-repetition/py-fsrs)（MIT，复习算法参考）
 
-## 许可证注意
+## 网页版
 
-本项目自有代码可随意用；若日后抄 GPL 项目代码（AnkiDroid / TypeWords），整个 App 需开源。自用不受影响。
+[wcx1208/words](https://github.com/wcx1208/words) · [在线使用](https://wcx1208.github.io/words/)
