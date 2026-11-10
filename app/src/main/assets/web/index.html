@@ -9,30 +9,38 @@
 <meta property="og:description" content="六级备考背单词应用，包含6194词、4级难度分组、四种学习模式（卡片认词、释义选择、拼写模式、听写模式）与间隔重复记忆调度。">
 <style>
 :root{
---bg:#F7F8FA;--card:#FFFFFF;--surface:#F1F3F8;--ink:#111827;--ink-2:#374151;--sub:#525B6C;--line:#E5E7EB;
+--bg-rgb:247,248,250;--bg-a:1;--card-rgb:255,255,255;--card-a:1;--surf-rgb:241,243,248;--surf-a:1;
+--bg:rgba(var(--bg-rgb),var(--bg-a));--card:rgba(var(--card-rgb),var(--card-a));--surface:rgba(var(--surf-rgb),var(--surf-a));
+--wall-a:0;--wall-img:none;
+--ink:#111827;--ink-2:#374151;--sub:#525B6C;--line:#E5E7EB;
 --brand:#3B5BDB;--brand-2:#4C6EF5;--brand-soft:rgba(59,91,219,.1);
 --accent:#F06543;--accent-soft:rgba(240,101,67,.12);
 --ok:#2F9E44;--ok-soft:rgba(47,158,68,.12);--warn:#D97706;--warn-btn:#E8A90C;--warn-soft:rgba(232,169,12,.14);
 --bad:#E03131;--bad-soft:rgba(224,49,49,.12);
 --shadow:0 2px 12px rgba(17,24,39,.05);--shadow-lg:0 12px 32px rgba(17,24,39,.09);
---glass:rgba(255,255,255,.82);--glass-line:rgba(255,255,255,.7);
+--glass:rgba(var(--card-rgb),calc(var(--card-a)*.82));--glass-line:rgba(255,255,255,.7);
 --fs-word:38px;--fs-h1:28px;--fs-h2:20px;--fs-lg:16px;--fs-base:14px;--fs-sm:12px;--fs-xs:11px;
 --r-card:16px;--r-btn:12px;--r-pill:999px;
 --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;
 --ease:cubic-bezier(.16,1,.3,1);--dur:180ms;
 }
 html.dark{
---bg:#0F1218;--card:#181C24;--surface:#222733;--ink:#F3F4F6;--ink-2:#D1D5DB;--sub:#9CA3AF;--line:#2A303E;
+--bg-rgb:15,18,24;--card-rgb:24,28,36;--surf-rgb:34,39,51;--ink:#F3F4F6;--ink-2:#D1D5DB;--sub:#9CA3AF;--line:#2A303E;
 --brand:#5C7CFA;--brand-2:#748FFC;--brand-soft:rgba(92,124,250,.16);
 --accent:#FF7A59;--accent-soft:rgba(255,122,89,.16);
 --ok:#37B24D;--ok-soft:rgba(55,178,77,.16);--warn:#F59F00;--warn-btn:#D98200;--warn-soft:rgba(245,159,0,.16);
 --bad:#F03E3E;--bad-soft:rgba(240,62,62,.16);
 --shadow:0 4px 16px rgba(0,0,0,.35);--shadow-lg:0 14px 36px rgba(0,0,0,.5);
---glass:rgba(24,28,36,.84);--glass-line:rgba(255,255,255,.12);
+--glass:rgba(var(--card-rgb),calc(var(--card-a)*.84));--glass-line:rgba(255,255,255,.12);
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:var(--fs-base);line-height:1.5;overflow-x:hidden;transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+html{margin:0;padding:0;background:#F7F8FA;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:var(--fs-base);line-height:1.5;overflow-x:hidden;transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+html.dark{background:#0F1218}
+body{margin:0;padding:0;background:var(--bg);color:inherit;font-size:inherit;font-family:inherit;line-height:inherit;overflow-x:hidden;transition:background var(--dur) var(--ease)}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background-image:var(--wall-img);background-size:cover;background-position:center;background-repeat:no-repeat;opacity:var(--wall-a);transition:opacity .35s var(--ease)}
+html.dark body::before{opacity:calc(var(--wall-a)*.62)}
+#main,.botnav,.topbar{position:relative;z-index:1}
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
 button:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .row{display:flex;align-items:center;gap:var(--sp-2)}
@@ -205,6 +213,14 @@ nav.botnav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--gl
 .modal-mask{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:var(--sp-4);animation:fadeIn 150ms var(--ease)}
 .modal-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:var(--sp-5);max-width:420px;width:100%;max-height:86vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
 .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:70;background:var(--ink);color:var(--bg);padding:var(--sp-2) var(--sp-4);border-radius:var(--r-pill);font-size:var(--fs-sm);font-weight:600;box-shadow:var(--shadow-lg);pointer-events:none;white-space:nowrap}
+.wp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.wp-cell{height:46px;border-radius:10px;border:2px solid transparent;cursor:pointer;font-size:11px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;text-shadow:0 1px 3px rgba(0,0,0,.5);background-size:cover;background-position:center;padding:0}
+.wp-cell.on{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.wp-pick{display:block;margin-top:10px;padding:10px;border-radius:10px;border:1px dashed var(--line);text-align:center;font-size:var(--fs-sm);font-weight:600;color:var(--brand);cursor:pointer;background:var(--surface)}
+.wp-pick input{display:none}
+.wp-range{display:flex;align-items:center;gap:10px;margin-top:10px}
+.wp-range span{font-size:var(--fs-xs);color:var(--sub);min-width:62px}
+.wp-range input[type=range]{flex:1;accent-color:var(--brand);height:28px}
 .skel{background:linear-gradient(90deg,var(--surface) 25%,var(--line) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--r-btn)}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 </style>
@@ -260,7 +276,7 @@ if(m<6||(m===6&&d<=15))return `${y}-06-15`;
 if(m<12||(m===12&&d<=15))return `${y}-12-15`;
 return `${y+1}-06-15`;
 }
-let S=safeLoad("srs",{}),H=safeLoad("hist",{}),CFG=Object.assign({daily:20,examDate:defaultExamDate(),auto:false,cloze:true,scenic:true,incBook:true,quizAuto:true,theme:localStorage.getItem("theme")||"auto"},safeLoad("cfg",{}));
+let S=safeLoad("srs",{}),H=safeLoad("hist",{}),CFG=Object.assign({daily:20,examDate:defaultExamDate(),auto:false,cloze:true,scenic:true,incBook:true,quizAuto:true,theme:localStorage.getItem("theme")||"auto",wall:"none",wallA:.6,uiA:1,wallImg:""},safeLoad("cfg",{}));
 CFG.daily=Math.min(500,Math.max(1,parseInt(CFG.daily,10)||20));
 if(!CFG.examDate||!/^\d{4}-\d{2}-\d{2}$/.test(CFG.examDate))CFG.examDate=defaultExamDate();
 let tier=localStorage.getItem("tier")||"C";if(!TIERS.some(x=>x[0]===tier))tier="C";
@@ -273,7 +289,8 @@ const todayMs=new Date().setHours(0,0,0,0),examMs=new Date(CFG.examDate+"T00:00:
 const daysLeft=Math.max(1,Math.ceil((examMs-todayMs)/DAY));
 const bufferDays=daysLeft>14?7:(daysLeft>5?3:0),learnWindow=Math.max(1,daysLeft-bufferDays);
 const recSafe=freshN>0?Math.min(500,Math.max(5,Math.ceil(freshN/learnWindow))):15;
-const recExact=freshN>0?Math.min(500,Math.max(5,Math.ceil(freshN/daysLeft))):10;
+let recExact=freshN>0?Math.min(500,Math.max(5,Math.floor(freshN/daysLeft))):10;
+if(recExact>=recSafe)recExact=Math.max(5,recSafe-1);
 const recCore=freshN>0?Math.min(500,Math.max(5,Math.ceil((highFreshN||Math.round(freshN*.6))/daysLeft))):10;
 const useCoreAlt=recSafe>45&&highFreshN>0&&recCore<recExact;
 const recAlt=useCoreAlt?recCore:recExact;
@@ -301,6 +318,60 @@ const sp=getSmartPlan(tier);
 showToast(`🎯 已设考试日 ${dStr}（距考 ${sp.daysLeft} 天，推荐 ${sp.recSafe} 词/天）`);
 if(inModal)openPlanModal();else render();
 }
+const WALLS=[
+["none","无",""],
+["mint","薄荷晨","linear-gradient(135deg,#D4FC79 0%,#96E6A1 100%)"],
+["dusk","暮色蓝","linear-gradient(135deg,#2E3192 0%,#1BFFFF 100%)"],
+["peach","蜜桃暖","linear-gradient(135deg,#FFD3A5 0%,#FD6585 100%)"],
+["forest","森野绿","linear-gradient(135deg,#0BA360 0%,#3CBA92 100%)"],
+["night","星夜紫","linear-gradient(135deg,#41295A 0%,#2F0743 100%)"],
+["ink","墨护眼","linear-gradient(135deg,#1A1C1E 0%,#252830 100%)"],
+["custom","相册",""]
+];
+function wallBg(){
+const id=CFG.wall||"none";
+if(id==="custom")return CFG.wallImg?`url("${CFG.wallImg}")`:"";
+const it=WALLS.find(x=>x[0]===id)||WALLS[0];
+return it[2];
+}
+function applyWall(){
+const r=document.documentElement,bg=wallBg(),on=!!bg;
+r.style.setProperty("--wall-img",bg||"none");
+r.style.setProperty("--wall-a",on?String(Math.min(1,Math.max(0,Number(CFG.wallA??.6)))):"0");
+const ui=Math.min(1,Math.max(.35,Number(CFG.uiA??1)));
+r.style.setProperty("--card-a",on?String(Math.max(.42,ui)):"1");
+r.style.setProperty("--surf-a",on?String(Math.max(.5,ui)):"1");
+r.style.setProperty("--bg-a",on?String(Math.min(.92,.42+.4*ui)):"1");
+}
+function setWall(id){CFG.wall=id;save();applyWall();render()}
+function pickWall(inp){
+const f=inp.files&&inp.files[0];if(!f)return;
+const rd=new FileReader();
+rd.onload=()=>{
+const img=new Image();
+img.onload=()=>{
+try{
+let max=1600,sc=Math.min(1,max/Math.max(img.width,img.height));
+let c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));
+c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+let data=c.toDataURL("image/jpeg",.82);
+// localStorage 只有 ~5MB，超 900KB 就降尺寸重压，避免挤掉学习进度
+if(data.length>900000){
+max=1100;sc=Math.min(1,max/Math.max(img.width,img.height));
+c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));
+c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+data=c.toDataURL("image/jpeg",.7);
+}
+CFG.wallImg=data;CFG.wall="custom";
+save();applyWall();render();showToast("✅ 壁纸已更新");
+}catch(e){showToast("图片过大，请换一张")}
+};
+img.onerror=()=>showToast("无法读取该图片");
+img.src=rd.result;
+};
+rd.onerror=()=>showToast("读取失败");
+rd.readAsDataURL(f);
+}
 function applyTheme(t){
 CFG.theme=["auto","light","dark"].includes(t)?t:"auto";
 localStorage.setItem("theme",CFG.theme);
@@ -311,6 +382,7 @@ const btn=document.getElementById("theme-quick");
 if(btn){const ic={auto:"🌓",light:"☀️",dark:"🌙"},nm={auto:"跟随系统",light:"浅色模式",dark:"深色模式"};btn.textContent=ic[CFG.theme];btn.title="当前："+nm[CFG.theme];btn.setAttribute("aria-label","切换主题，当前为"+nm[CFG.theme])}
 }
 applyTheme(CFG.theme);
+applyWall();
 if(window.matchMedia)window.matchMedia("(prefers-color-scheme:dark)").addEventListener("change",()=>{if(CFG.theme==="auto")applyTheme("auto")});
 function cycleTheme(){
 const od=["auto","light","dark"],nx=od[(od.indexOf(CFG.theme)+1)%3];
@@ -444,7 +516,7 @@ TIERS.map(([k,l])=>`<button type="button" role="tab" aria-selected="${k===tier}"
 </button>
 </div>
 <div class="quote-bar">
-<div onclick="play('${esc(qObj.q)}')" style="cursor:pointer" title="点击朗读名言"><q>${escH(qObj.q)}</q> — <span>${escH(qObj.a)}</span></div>
+<div onclick="playSentence('${esc(qObj.q)}')" style="cursor:pointer" title="点击朗读名言"><q>${escH(qObj.q)}</q> — <span>${escH(qObj.a)}</span></div>
 <button type="button" class="icon-btn" style="min-width:36px;min-height:36px" onclick="quoteOffset++;render()" aria-label="换一句名言">↻</button>
 </div>
 </section>
@@ -539,7 +611,7 @@ ${revealed?`<div class="reveal-zone" onclick="event.stopPropagation()">
 <div class="meaning-box">${escH(w.m)}</div>
 ${w.n?`<div class="detail-block"><span class="tag-lbl">助记</span>${escH(w.n)}</div>`:""}
 ${w.col&&w.col.length?`<div class="detail-block"><span class="tag-lbl">真题词组</span>${w.col.map(escH).join(" ； ")}</div>`:""}
-${w.ex?`<div class="detail-block" onclick="play('${esc(w.ex.replace(/^\.\.\.|\.\.\.$/g,''))}')" style="cursor:pointer" title="点击朗读例句"><span class="tag-lbl">真题例句 🔊</span>${makeCloze(w.ex,w.w,true)}${w.exm?`<div class="sub" style="margin-top:4px">${escH(w.exm)}</div>`:""}</div>`:""}
+${w.ex?`<div class="detail-block" onclick="playSentence('${esc(w.ex.replace(/^\.\.\.|\.\.\.$/g,''))}')" style="cursor:pointer" title="点击朗读例句"><span class="tag-lbl">真题例句 🔊</span>${makeCloze(w.ex,w.w,true)}${w.exm?`<div class="sub" style="margin-top:4px">${escH(w.exm)}</div>`:""}</div>`:""}
 ${w.cf&&w.cf.length?`<div class="detail-block"><span class="tag-lbl">易混辨析</span><span class="xs">点按对比释义</span><div class="cf-row">${w.cf.slice(0,5).map(([cw,tp])=>`<button type="button" class="cf-btn" onclick="previewWord('${esc(cw)}')">${escH(cw)} <small class="sub">(${tp})</small></button>`).join("")}</div><div id="cf-preview" class="sub" style="color:var(--brand);margin-top:6px"></div></div>`:""}
 </div>`:`<button type="button" class="tap-reveal-btn" onclick="event.stopPropagation();reveal()">👆 点按卡片或按空格揭示释义</button>`}`;
 bottomBar=renderGrades(!revealed,[
@@ -550,12 +622,12 @@ bottomBar=renderGrades(!revealed,[
 }else if(mode==="quiz"){
 const opts=w._opts||[];
 cardInner=topCardBar+`<div class="w-main">${escH(w.w)}</div>
-<div class="ipa-row">${w.i?`<span>${escH(w.i)}</span>`:""}<button type="button" class="audio-pill" onclick="play('${esc(w.w)}')">🔊 发音</button></div>
+<div class="ipa-row">${w.i?`<span>${escH(w.i)}</span>`:""}<button type="button" class="audio-pill" onclick="playSentence('${esc(w.w)}')">🔊 发音</button></div>
 <div class="quiz-opts">${opts.map((o,i)=>{
 const cls=revealed?(i===w._ans?"right":(i===quizPick?"wrong":"")):"";
 return `<button type="button" class="quiz-opt ${cls}" ${revealed?'disabled':''} onclick="pick(${i})"><span class="opt-k">${String.fromCharCode(65+i)}</span><span>${escH(o)}</span></button>`;
 }).join("")}</div>
-${revealed?`<div class="reveal-zone">${w.n?`<div class="detail-block"><span class="tag-lbl">助记</span>${escH(w.n)}</div>`:""}${w.ex?`<div class="detail-block"><span class="tag-lbl">真题例句</span>${makeCloze(w.ex,w.w,true)}</div>`:""}</div>`:""}`;
+${revealed?`<div class="reveal-zone">${w.n?`<div class="detail-block"><span class="tag-lbl">助记</span>${escH(w.n)}</div>`:""}${w.ex?`<div class="detail-block" onclick="playSentence('${esc(w.ex.replace(/^\.\.\.|\.\.\.$/g,''))}')" style="cursor:pointer" title="点击朗读例句"><span class="tag-lbl">真题例句 🔊</span>${makeCloze(w.ex,w.w,true)}${w.exm?`<div class="sub" style="margin-top:4px">${escH(w.exm)}</div>`:""}</div>`:""}</div>`:""}`;
 bottomBar=renderGrades(!revealed,[
 ["g-bad",0,"记错了","10分钟后重现"],
 ["g-warn",1,"有点犹豫",nextIntervalLabel(1,S[w.w])],
@@ -567,14 +639,14 @@ const hintStr=hintLv>0?(w.w.slice(0,hintLv)+" "+"_ ".repeat(Math.max(0,w.w.lengt
 const posMatch=w.m.match(/^[a-z]+\./i);
 const topPart=mode==="type"
 ?`<div class="xs" style="margin-top:8px">根据释义与语境拼写英文单词</div><div class="meaning-box" style="margin-top:6px">${escH(w.m)}</div>${w.ex?`<div class="cloze-preview" style="margin-top:6px">${makeCloze(w.ex,w.w,checked)}</div>`:""}<div class="sub" style="margin-top:6px;color:var(--brand);font-family:monospace">${hintStr}</div>`
-:`<div class="xs" style="margin-top:8px">听发音默写单词 · 锻炼六级听力瞬间反应</div><button type="button" class="dict-wave-btn" onclick="play('${esc(w.w)}')" aria-label="播放单词发音">🔊</button><div class="sub">${posMatch?`词性：<b>${posMatch[0]}</b> · `:""}共 ${w.w.length} 字母 <button type="button" style="border:none;background:none;color:var(--brand);cursor:pointer" onclick="dictPeek=!dictPeek;render()">${dictPeek?'隐藏释义':'👀 偷看释义'}</button></div>${dictPeek||checked?`<div class="meaning-box" style="margin-top:6px;font-size:var(--fs-lg)">${escH(w.m)}</div>`:""}`;
+:`<div class="xs" style="margin-top:8px">听发音默写单词 · 锻炼六级听力瞬间反应</div><button type="button" class="dict-wave-btn" onclick="playSentence('${esc(w.w)}')" aria-label="播放单词发音">🔊</button><div class="sub">${posMatch?`词性：<b>${posMatch[0]}</b> · `:""}共 ${w.w.length} 字母 <button type="button" style="border:none;background:none;color:var(--brand);cursor:pointer" onclick="dictPeek=!dictPeek;render()">${dictPeek?'隐藏释义':'👀 偷看释义'}</button></div>${dictPeek||checked?`<div class="meaning-box" style="margin-top:6px;font-size:var(--fs-lg)">${escH(w.m)}</div>`:""}`;
 cardInner=topCardBar+topPart+`<input id="ti" class="spell-input ${checked?(isRight?'right':'wrong'):''}" placeholder="${mode==='type'?'输入英文拼写后按回车':'听音输入英文后回车'}" value="${escH(typed)}" ${checked?'readonly':''} autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="单词拼写输入框">`+
 (checked?`<div class="reveal-zone tc">
 <div class="w-main" style="font-size:26px;color:${isRight?'var(--ok)':'var(--bad)'}">${escH(w.w)} <small class="sub">${escH(w.i||'')}</small></div>
 ${!isRight?`<input id="retry-ti" class="spell-input" style="font-size:20px;min-height:46px;margin-top:8px" placeholder="✍️ 照着正确拼写敲一遍即过关…" value="${escH(retryTyped)}" autocomplete="off" autocapitalize="off" spellcheck="false">`:""}
 ${w.n?`<div class="detail-block"><span class="tag-lbl">助记</span>${escH(w.n)}</div>`:""}
 </div>`
-:`<div class="row" style="margin-top:12px">${mode==='type'?`<button type="button" class="btn subtle sm" onclick="giveHint()">💡 提示字母</button>`:`<button type="button" class="btn subtle sm" onclick="play('${esc(w.w)}')">🔁 重播发音</button>`}<button type="button" class="btn subtle sm" onclick="checkType(true)">看答案</button><button type="button" class="btn sm" onclick="checkType(false)">核对 (Enter)</button></div>`);
+:`<div class="row" style="margin-top:12px">${mode==='type'?`<button type="button" class="btn subtle sm" onclick="giveHint()">💡 提示字母</button>`:`<button type="button" class="btn subtle sm" onclick="playSentence('${esc(w.w)}')">🔁 重播发音</button>`}<button type="button" class="btn subtle sm" onclick="checkType(true)">看答案</button><button type="button" class="btn sm" onclick="checkType(false)">核对 (Enter)</button></div>`);
 bottomBar=renderGrades(!checked,[
 ["g-bad",0,"1 没记住","10分钟后"],
 ["g-warn",1,"2 模糊",nextIntervalLabel(1,S[w.w])],
@@ -673,6 +745,16 @@ ${topWrong.length?topWrong.map((x,idx)=>`<div class="set-row" style="cursor:poin
 m.innerHTML=`<div class="home-layout"><div>
 <section class="box set-group">
 <h2 class="sec-title">外观与视觉偏好</h2>
+<div class="set-row" style="display:block">
+<div><div class="set-lbl">壁纸</div><div class="set-desc">渐变或自己的相册照片，首页/学习页同步生效</div></div>
+<div class="wp-grid">`+
+WALLS.filter(x=>x[0]!=="custom").map(([wid,wn,wbg])=>`<button type="button" class="wp-cell ${CFG.wall===wid?'on':''}" style="${wbg?`background:${wbg}`:'background:var(--surface);color:var(--sub);text-shadow:none'}" onclick="setWall('${wid}')" aria-label="壁纸：${wn}">${wn}</button>`).join("")+
+`<button type="button" class="wp-cell ${CFG.wall==='custom'?'on':''}" style="background:var(--surface);color:var(--sub);text-shadow:none" onclick="document.getElementById('wp-file').click()" aria-label="从相册选择壁纸">📷 相册</button>
+</div>
+<label class="wp-pick">从相册选择图片<input type="file" id="wp-file" accept="image/*" onchange="pickWall(this)"></label>
+<div class="wp-range"><span>壁纸强度</span><input type="range" min="0" max="100" value="${Math.round((CFG.wallA??.6)*100)}" oninput="CFG.wallA=this.value/100;applyWall();save()" aria-label="壁纸强度"></div>
+<div class="wp-range"><span>界面不透明</span><input type="range" min="40" max="100" value="${Math.round((CFG.uiA??1)*100)}" oninput="CFG.uiA=this.value/100;applyWall();save()" aria-label="界面不透明度"></div>
+</div>
 <div class="set-row">
 <div><div class="set-lbl">主题外观</div><div class="set-desc">支持跟随系统或手动锁定深浅色</div></div>
 <div class="seg-ctrl" role="radiogroup" aria-label="主题外观">`+
@@ -790,11 +872,11 @@ const st=S[w.w]||{};play(w.w);
 R("modal-root",`<div class="modal-mask" role="dialog" aria-modal="true" onclick="closeModal()"><div class="modal-card" onclick="event.stopPropagation()">
 <div class="rsb"><span class="xs">${w.c||'六级高频'} · 考频 ${'★'.repeat(w.imp||2)}</span><button type="button" class="star-btn ${st.star?'on':''}" onclick="toggleStar('${esc(w.w)}');openWordDetail('${esc(w.w)}')">${st.star?'★ 已收藏':'☆ 收藏'}</button></div>
 <div class="w-main" style="font-size:32px;margin-top:4px">${escH(w.w)}</div>
-<div class="ipa-row" style="margin-bottom:8px">${w.i?`<span>${escH(w.i)}</span>`:""}<button type="button" class="audio-pill" onclick="play('${esc(w.w)}')">🔊 朗读</button></div>
+<div class="ipa-row" style="margin-bottom:8px">${w.i?`<span>${escH(w.i)}</span>`:""}<button type="button" class="audio-pill" onclick="playSentence('${esc(w.w)}')">🔊 朗读</button></div>
 <div style="font-size:var(--fs-lg);font-weight:700;margin-bottom:8px">${escH(w.m)}</div>
 ${w.n?`<div class="detail-block"><span class="tag-lbl">助记</span>${escH(w.n)}</div>`:""}
 ${w.col&&w.col.length?`<div class="detail-block"><span class="tag-lbl">真题词组</span>${w.col.map(escH).join(" ； ")}</div>`:""}
-${w.ex?`<div class="detail-block" onclick="play('${esc(w.ex.replace(/^\.\.\.|\.\.\.$/g,''))}')" style="cursor:pointer"><span class="tag-lbl">真题例句 🔊</span>${makeCloze(w.ex,w.w,true)}${w.exm?`<div class="sub" style="margin-top:4px">${escH(w.exm)}</div>`:""}</div>`:""}
+${w.ex?`<div class="detail-block" onclick="playSentence('${esc(w.ex.replace(/^\.\.\.|\.\.\.$/g,''))}')" style="cursor:pointer"><span class="tag-lbl">真题例句 🔊</span>${makeCloze(w.ex,w.w,true)}${w.exm?`<div class="sub" style="margin-top:4px">${escH(w.exm)}</div>`:""}</div>`:""}
 <div class="row" style="margin-top:16px">
 <button type="button" class="btn subtle sm f1" onclick="S['${esc(w.w)}']=next(S['${esc(w.w)}'],0);save();closeModal();render();showToast('已加入待复习队列')">🔁 设为待复习</button>
 <button type="button" class="btn sm f1" onclick="S['${esc(w.w)}']={iv:30,e:2.6,ease:2.6,due:Date.now()+30*DAY,r:(S['${esc(w.w)}']?.r||0)+1,wCnt:S['${esc(w.w)}']?.wCnt||0,star:false,g:2};save();closeModal();render();showToast('⚡ 已标为熟知记牢')">⚡ 标为已熟知</button>
@@ -869,14 +951,39 @@ else{bx.textContent=cw+"（拓展关联词）";play(cw)}
 }
 function play(w){
 if(!w)return;
+if(String(w).length>48){playLongSentence(String(w));return}
 try{
 const a=new Audio("https://dict.youdao.com/dictvoice?type=2&audio="+encodeURIComponent(w));
-let ok=false;const tm=setTimeout(()=>{if(!ok){ok=true;tts(w)}},1800);
-a.onended=()=>{ok=true;clearTimeout(tm)};a.onerror=()=>{if(!ok){ok=true;clearTimeout(tm);tts(w)}};
-const p=a.play();if(p&&p.catch)p.catch(()=>{if(!ok){ok=true;clearTimeout(tm);tts(w)}});
-}catch(e){tts(w)}
+let ok=false;const tm=setTimeout(()=>{if(!ok){ok=true;playTts(w)}},1800);
+a.onended=()=>{ok=true;clearTimeout(tm)};a.onerror=()=>{if(!ok){ok=true;clearTimeout(tm);playTts(w)}};
+const p=a.play();if(p&&p.catch)p.catch(()=>{if(!ok){ok=true;clearTimeout(tm);playTts(w)}});
+}catch(e){playTts(w)}
 }
-function tts(w){try{if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w);u.lang="en-US";u.rate=.92;speechSynthesis.speak(u)}catch(e){}}
+function playSentence(t){
+if(!t)return;
+var s=String(t).replace(/^\.\.\.|\.\.\.$/g,"").trim();
+if(!s)return;
+if(s.length>48){playLongSentence(s);return}
+play(s);
+}
+function ttsUrl(t){return "https://fanyi.baidu.com/gettts?lan=en&text="+encodeURIComponent(t)+"&spd=3&source=web"}
+function playLongSentence(s){
+try{
+var a=new Audio(ttsUrl(s));
+var done=false,tm=setTimeout(function(){if(!done){done=true;showToast("例句朗读需联网")}},4000);
+a.onended=function(){done=true;clearTimeout(tm)};
+a.onerror=function(){if(!done){done=true;clearTimeout(tm);showToast("例句朗读需联网")}};
+var p=a.play();
+if(p&&p.catch)p.catch(function(){if(!done){done=true;clearTimeout(tm);showToast("例句朗读需联网")}});
+}catch(e){showToast("例句朗读需联网")}
+}
+function playTts(t){
+try{
+var a=new Audio(ttsUrl(t));
+a.play().catch(function(){});
+}catch(e){}
+}
+function tts(w){playTts(w)}
 function grade(g){
 clearTimeout(window.__qzTimer);
 const w=Q[qi];if(!w)return;

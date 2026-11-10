@@ -356,7 +356,8 @@ class MainActivity : Activity() {
   if(window.__nativeBridgeReady) return; window.__nativeBridgeReady = 1;
   var NA = window.AndroidAudio;
   function nativePlay(w){ try{ var t=String(w); if(t.length>48) return false; return NA ? !!NA.play(t) : false; }catch(e){ return false; } }
-  function nativeTts(w){ try{ if(NA && NA.speak) NA.speak(String(w)); }catch(e){} }
+  // 兜底改走网页的在线 TTS（百度），不再调用系统 TextToSpeech，避免国产 ROM 的 TTS 崩溃
+  function nativeTts(w){ try{ if(window.playTts) return window.playTts(String(w)); }catch(e){} }
   // 内置真人美音优先，其次在线有道，最后系统 TTS
   window.play = function(w){
     if(!w) return;

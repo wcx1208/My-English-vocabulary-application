@@ -954,10 +954,10 @@ if(!w)return;
 if(String(w).length>48){playLongSentence(String(w));return}
 try{
 const a=new Audio("https://dict.youdao.com/dictvoice?type=2&audio="+encodeURIComponent(w));
-let ok=false;const tm=setTimeout(()=>{if(!ok){ok=true;tts(w)}},1800);
-a.onended=()=>{ok=true;clearTimeout(tm)};a.onerror=()=>{if(!ok){ok=true;clearTimeout(tm);tts(w)}};
-const p=a.play();if(p&&p.catch)p.catch(()=>{if(!ok){ok=true;clearTimeout(tm);tts(w)}});
-}catch(e){tts(w)}
+let ok=false;const tm=setTimeout(()=>{if(!ok){ok=true;playTts(w)}},1800);
+a.onended=()=>{ok=true;clearTimeout(tm)};a.onerror=()=>{if(!ok){ok=true;clearTimeout(tm);playTts(w)}};
+const p=a.play();if(p&&p.catch)p.catch(()=>{if(!ok){ok=true;clearTimeout(tm);playTts(w)}});
+}catch(e){playTts(w)}
 }
 function playSentence(t){
 if(!t)return;
@@ -966,9 +966,10 @@ if(!s)return;
 if(s.length>48){playLongSentence(s);return}
 play(s);
 }
+function ttsUrl(t){return "https://fanyi.baidu.com/gettts?lan=en&text="+encodeURIComponent(t)+"&spd=3&source=web"}
 function playLongSentence(s){
 try{
-var a=new Audio("https://dict.youdao.com/dictvoice?type=2&audio="+encodeURIComponent(s));
+var a=new Audio(ttsUrl(s));
 var done=false,tm=setTimeout(function(){if(!done){done=true;showToast("例句朗读需联网")}},4000);
 a.onended=function(){done=true;clearTimeout(tm)};
 a.onerror=function(){if(!done){done=true;clearTimeout(tm);showToast("例句朗读需联网")}};
@@ -976,7 +977,13 @@ var p=a.play();
 if(p&&p.catch)p.catch(function(){if(!done){done=true;clearTimeout(tm);showToast("例句朗读需联网")}});
 }catch(e){showToast("例句朗读需联网")}
 }
-function tts(w){try{if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w);u.lang="en-US";u.rate=.92;speechSynthesis.speak(u)}catch(e){}}
+function playTts(t){
+try{
+var a=new Audio(ttsUrl(t));
+a.play().catch(function(){});
+}catch(e){}
+}
+function tts(w){playTts(w)}
 function grade(g){
 clearTimeout(window.__qzTimer);
 const w=Q[qi];if(!w)return;
