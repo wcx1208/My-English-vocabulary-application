@@ -8,7 +8,7 @@
 
 ## 📲 下载安装（安卓）
 
-[**下载最新 APK**](https://github.com/wcx1208/cet6-vocabulary-android/releases/latest) · Android 8.0+ · 约 100 MB
+[**下载最新 APK**](https://github.com/wcx1208/cet6-words/releases/latest) · Android 8.0+ · 约 100 MB
 
 安装时如提示"未知来源应用"，选择允许即可；覆盖安装不会丢失学习进度。
 
@@ -16,7 +16,7 @@
 
 ## 🌐 网页版
 
-**https://wcx1208.github.io/cet6-vocabulary-android/**
+**https://wcx1208.github.io/cet6-words/**
 
 源码在 `docs/` 目录（GitHub Pages）。手机浏览器可"添加到主屏幕"当 App 用，进度存浏览器本地。
 
