@@ -2,7 +2,9 @@ package com.wcx.mywords
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +12,9 @@ import android.speech.tts.TextToSpeech
 import android.view.View
 import android.view.WindowInsetsController
 import android.webkit.JavascriptInterface
+import android.webkit.RenderProcessGoneDetail
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -33,6 +38,9 @@ class MainActivity : Activity() {
 
     /** 旧版进度迁移脚本，只在首次启动执行一次 */
     private var migrateScript: String? = null
+
+    /** 网页 <input type=file> 的回调（选壁纸） */
+    private var fileCallback: ValueCallback<Array<Uri>>? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +80,38 @@ class MainActivity : Activity() {
                 migrateScript?.let { js ->
                     migrateScript = null
                     web.evaluateJavascript(js) { web.reload() }
+                }
+            }
+
+            override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
+                // 渲染进程崩了不要让整个 App 退出，重启一次界面
+                runCatching {
+                    startActivity(Intent(this@MainActivity, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                    finish()
+                }
+                return true
+            }
+        }
+        // 相册选壁纸：网页里的 <input type="file"> 需要原生接管，否则点击无反应
+        web.webChromeClient = object : WebChromeClient() {
+            override fun onShowFileChooser(
+                webView: WebView?,
+                callback: ValueCallback<Array<Uri>>?,
+                params: FileChooserParams?
+            ): Boolean {
+                fileCallback?.onReceiveValue(null)
+                fileCallback = callback
+                return try {
+                    val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                        addCategory(Intent.CATEGORY_OPENABLE)
+                        type = "image/*"
+                    }
+                    startActivityForResult(Intent.createChooser(intent, "选择壁纸"), REQ_PICK_IMAGE)
+                    true
+                } catch (e: Exception) {
+                    fileCallback = null
+                    false
                 }
             }
         }
@@ -190,11 +230,11 @@ class MainActivity : Activity() {
             p.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
             afd.close()
             p.setOnCompletionListener { mp ->
-                mp.release()
+                runCatching { mp.release() }
                 if (player === mp) player = null
             }
             p.setOnErrorListener { mp, _, _ ->
-                mp.release()
+                runCatching { mp.release() }
                 if (player === mp) player = null
                 true
             }
@@ -244,20 +284,34 @@ class MainActivity : Activity() {
          */
         @JavascriptInterface
         fun play(word: String): Boolean {
+            // 长文本（例句）不走 MediaPlayer：既没有对应音频，也能避开解码器异常
+            if (word.length > 48) return false
             val actual = resolveAsset(word) ?: return false
-            runOnUiThread { startAsset(actual) }
+            runOnUiThread { runCatching { startAsset(actual) } }
             return true
         }
 
         @JavascriptInterface
         fun speak(word: String) {
-            runOnUiThread { speak(word) }
+            if (word.length > 48) return
+            runOnUiThread { runCatching { speak(word) } }
         }
 
         @JavascriptInterface
         fun setDark(dark: Boolean) {
             runOnUiThread { applySystemBars(dark) }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQ_PICK_IMAGE) {
+            val uri = if (resultCode == RESULT_OK) data?.data else null
+            runCatching { fileCallback?.onReceiveValue(if (uri != null) arrayOf(uri) else null) }
+            fileCallback = null
+            return
+        }
+        @Suppress("DEPRECATION")
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onBackPressed() {
@@ -291,6 +345,8 @@ class MainActivity : Activity() {
     }
 
     private companion object {
+        const val REQ_PICK_IMAGE = 1001
+
         val BG_LIGHT: Int = Color.rgb(0xF7, 0xF8, 0xFA)
         val BG_DARK: Int = Color.rgb(0x0F, 0x12, 0x18)
 
@@ -299,7 +355,7 @@ class MainActivity : Activity() {
 (function(){
   if(window.__nativeBridgeReady) return; window.__nativeBridgeReady = 1;
   var NA = window.AndroidAudio;
-  function nativePlay(w){ try{ return NA ? !!NA.play(String(w)) : false; }catch(e){ return false; } }
+  function nativePlay(w){ try{ var t=String(w); if(t.length>48) return false; return NA ? !!NA.play(t) : false; }catch(e){ return false; } }
   function nativeTts(w){ try{ if(NA && NA.speak) NA.speak(String(w)); }catch(e){} }
   // 内置真人美音优先，其次在线有道，最后系统 TTS
   window.play = function(w){
