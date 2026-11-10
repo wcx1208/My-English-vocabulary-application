@@ -4,7 +4,7 @@
 
 ## 下载安装
 
-[**点此下载最新 APK**](https://github.com/wcx1208/My-English-vocabulary-application/releases/latest)（Android 8.0+，约 100 MB，含内置发音）
+[**点此下载最新 APK**](https://github.com/wcx1208/cet6-vocabulary-android/releases/latest)（Android 8.0+，约 100 MB，含内置发音）
 
 安装提示"未知来源应用"选允许即可；覆盖安装不会丢失学习进度。
 
