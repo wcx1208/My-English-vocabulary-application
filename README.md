@@ -8,17 +8,24 @@
 
 ## 📲 下载安装（安卓）
 
-[**下载最新 APK**](https://github.com/wcx1208/cet6-words/releases/latest) · Android 8.0+ · 约 100 MB
+[**下载最新版 v3.0**](https://github.com/wcx1208/cet6-words/releases/latest) · Android 8.0+ · 约 83 MB
 
-安装时如提示"未知来源应用"，选择允许即可；覆盖安装不会丢失学习进度。
+| 版本 | 界面 | 说明 |
+|---|---|---|
+| **v3.0**（推荐） | 与网页版完全同一套 | 内置网页版 `index.html` + `data.js`，两端一致 |
+| [v2.9](https://github.com/wcx1208/cet6-words/releases/tag/v2.9) | Compose 原生界面 | 老版本，保留可回退 |
 
-**完全离线**：6194 词、6078 条真人美音、壁纸、语录全部内置，飞行模式下照常使用。
+两版同包名，覆盖安装即可；v3.0 首次启动会把 v2.9 的学习进度与打卡记录自动迁移过来。
+
+**完全离线**：6194 词、6078 条真人美音、界面资源全部内置，飞行模式下照常使用。
 
 ## 🌐 网页版
 
 **https://wcx1208.github.io/cet6-words/**
 
 源码在 `docs/` 目录（GitHub Pages）。手机浏览器可"添加到主屏幕"当 App 用，进度存浏览器本地。
+
+安卓版的界面就是这份 `docs/index.html` 的原样内嵌（见 `app/src/main/assets/web/`），所以两端永远一致：改网页版 = 改安卓版界面。
 
 ## ✨ 功能
 
@@ -32,7 +39,7 @@
 ### 学习
 
 - **四种模式**：卡片认词 / 释义选择 / 拼写默写 / 听写
-- **FSRS-6 遗忘曲线**：移植自 [py-fsrs](https://github.com/open-spaced-repetition/py-fsrs)（MIT），每个词按记忆稳定性安排在遗忘临界点复习
+- **间隔重复调度**：认识的词间隔拉长，忘记的词重新排队（早期版本移植自 [py-fsrs](https://github.com/open-spaced-repetition/py-fsrs) 的 FSRS-6 权重）
 - **不限量学习**：不设每日新词上限，随时学随时停
 - 错词本 · 目标圆环 · 连续打卡 · 7 天热力图 · 跨天自动重置 · 进度导入导出
 
@@ -40,30 +47,28 @@
 
 四级兜底策略：**内置真人美音（6078 条）→ 本地缓存 → 有道在线 → 系统 TTS**
 
+安卓版通过 JS Bridge 直接播放 APK 内的 mp3，网页版在无内置音频时才走在线接口。
+
 ### 个性化
 
 - 6 套渐变壁纸 + 相册自定义（应用内裁切，透明度可调）
 - 自定义桌面图标（方/圆遮罩）
 - 177 条英文激励名言
-- 双透明度滑杆（界面 / 壁纸）
+- 深色模式（跟随系统 / 手动切换），安卓版状态栏同步变色
 
 ## 🗂 项目结构
 
 ```
 app/src/main/java/com/wcx/mywords/
-├── MainActivity.kt    页面与交互（主页/学习/词表/统计/设置/裁切器）
-├── Fsrs.kt            FSRS-6 复习调度算法
-├── Words.kt           词条模型 · 词库加载 · 进度持久化
-├── Audio.kt           发音引擎（内置 → 缓存 → 在线 → TTS）
-└── Theme.kt           壁纸与主题引擎（代码绘制渐变 + 自定义图片）
+└── MainActivity.kt    WebView 外壳：加载 assets/web、发音桥接、进度迁移
 
 app/src/main/assets/
-├── words.json         6194 词条
-├── quotes.json        177 条名言
-├── wallpaper_default.png
+├── web/index.html     与 docs/index.html 同一份界面
+├── web/data.js        6194 词条数据
 └── audio/us/          6078 条真人美音 mp3
 
 docs/                  网页版（GitHub Pages）
+legacy-compose/        v2.9 及更早的原生 Compose 界面源码（不参与编译）
 ```
 
 ## 🔨 构建
