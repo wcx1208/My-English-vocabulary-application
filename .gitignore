@@ -1,7 +1,8 @@
-.gradle/
-build/
-local.properties
+node_modules/
+package-lock.json
 *.log
 *.exe
 *.apk
 release/
+web_v3.0.zip
+docs/
